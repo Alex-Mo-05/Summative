@@ -7,7 +7,7 @@ const store = useStore();
   <button class="purchase_btn" @click="store.clear()">Clear Cart</button>
 
   <div id="container">
-    <div class="cartlist" v-for="movie in Array.from(this.cart.values())">
+    <div class="cartlist" v-for="movie in Array.from(store.cart.values())">
       <div class="display">
         <div class="name">{{ movie.id }}: {{ movie.title }}</div>
 

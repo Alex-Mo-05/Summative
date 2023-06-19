@@ -1,9 +1,9 @@
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { defineStore } from "pinia";
 import axios from "axios";
-
 import { ref } from "vue";
 import { firestore } from "../firebase";
+import email from "../components/Login.vue"
 
 export const useStore = defineStore("store", {
   state: () => {
@@ -26,7 +26,7 @@ export const useStore = defineStore("store", {
         let data = (
           await axios.get("https://api.themoviedb.org/3/discover/movie", {
             params: {
-              api_key: "23b3a0cee96fcac58b28918686474f75",
+              api_key: "5353c690f7c8b76f4af766952589f1b2",
               with_genres: key,
               include_adult: false,
             },
@@ -76,24 +76,24 @@ export const useStore = defineStore("store", {
       });
     },
 
-    methods: {
-      async addToCart(id, poster) {
-        this.cart.set(id, data)
-        await updateDoc(doc(firestore, "carts", this.user.email), { cart: this.cart })
-        console.log(this.cart)
-      },
+    
+    async addToCart(id, data) {
+      this.cart.set({id, data,});
+      await setDoc(doc(firestore, "carts", email.value), { cartInfo: id });
+      console.log(this.cart);
+    },
 
-      removeFromCart(id) {
-        this.cart.delete(id)
-        doc(firestore, "carts", this.user.email).update({
-          cartInfo: firebase.firestore.FieldValue.arrayRemove(id)
-        }) 
-      },
+    async removeFromCart(id) {
+      this.cart.delete(id)
+      await doc(firestore, "carts", email.value).update({
+        cartInfo: firebase.firestore.FieldValue.arrayRemove(id)
+      }) ;
+    },
+
+    clear() {
+      this.cart = new Map();
+    },
   
-      clear() {
-        this.cart = new Map();
-      },
-    }
     
   },
 });

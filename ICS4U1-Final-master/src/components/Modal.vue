@@ -1,5 +1,6 @@
 <script setup>
-import { useStore } from "../store/index.js";
+import { firestore } from "../firebase";
+import { useStore } from "../store";
 
 const props = defineProps(["value"]);
 const emits = defineEmits(["toggleModal"]);
@@ -8,10 +9,11 @@ const store = useStore();
 let data = (
   await axios.get(`https://api.themoviedb.org/3/movie/${props.value.id}`, {
     params: {
-      api_key: "23b3a0cee96fcac58b28918686474f75",
+      api_key: "5353c690f7c8b76f4af766952589f1b2",
     },
   })
 ).data;
+
 </script>
 
 <template>
@@ -26,13 +28,12 @@ let data = (
         Release Date: {{ data.release_date }} <br />
         Overview: {{ data.overview }}
         </p>
-        <button class="cart" id="btn_sub" @click="
-          store.addToCart(props.value.id, {
-            id: data.id,
-            poster: data.poster_path,
-            title: data.title,
-            date: data.release_date,
-          }); emits('toggleModal')">Add To Cart</button>
+        <button class="cart" id="btn_sub" @click="emits('toggleModal'); store.addToCart(props.value.id, {
+          id: data.id,
+          poster: data.poster_path,
+          title: data.title,
+          date: data.release_date,
+        });">Add To Cart</button>
       </div>
     </div>
   </Teleport>
