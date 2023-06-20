@@ -77,15 +77,16 @@ export const useStore = defineStore("store", {
     },
 
     
-    async addToCart(id, data) {
-      this.cart.set({id, data,});
-      await setDoc(doc(firestore, "carts", email.value), { cartInfo: id });
+    async addToCart(id, poster) {
+      this.cart.push(id, poster);
+      console.log(this.user.email);
+      await setDoc(doc(firestore, "carts", this.user.email), { cartInfo: this.cart });
       console.log(this.cart);
     },
 
     async removeFromCart(id) {
       this.cart.delete(id)
-      await doc(firestore, "carts", email.value).update({
+      await doc(firestore, "carts", store.user).update({
         cartInfo: firebase.firestore.FieldValue.arrayRemove(id)
       }) ;
     },

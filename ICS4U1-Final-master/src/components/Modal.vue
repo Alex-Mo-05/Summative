@@ -28,12 +28,7 @@ let data = (
         Release Date: {{ data.release_date }} <br />
         Overview: {{ data.overview }}
         </p>
-        <button class="cart" id="btn_sub" @click="emits('toggleModal'); store.addToCart(props.value.id, {
-          id: data.id,
-          poster: data.poster_path,
-          title: data.title,
-          date: data.release_date,
-        });">Add To Cart</button>
+        <button class="cart" id="btn_sub" @click="emits('toggleModal'); store.addToCart(data.id, data.poster_path,);">Add To Cart</button>
       </div>
     </div>
   </Teleport>

@@ -8,6 +8,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { storeToRefs } from "pinia";
+import { useStore } from "../store"
+
+const store = useStore()
 const data = ref(true);
 const submitted = ref(false);
 const email = ref("");
@@ -17,8 +21,9 @@ const router = useRouter();
 
 const isSuccessful = () => {
   submitted.value = true;
-  signInWithEmailAndPassword(auth, email.value, password.value)
+  const { user } = signInWithEmailAndPassword(auth, email.value, password.value)
     .then(() => {
+      store.user = user;
       data.value = true;
       router.push("/Purchase");
       isLoggedIn.value = true;
@@ -30,7 +35,8 @@ const isSuccessful = () => {
 };
 const registerUserByGoogle = async () => {
   const provider = new GoogleAuthProvider();
-  const user = await signInWithPopup(auth, provider);
+  const { user } = await signInWithPopup(auth, provider);
+  store.user = user;
   router.push("/Purchase");
   isLoggedIn.value = true;
 };

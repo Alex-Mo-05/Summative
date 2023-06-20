@@ -8,12 +8,15 @@ import {
 } from "firebase/auth";
 import { isLoggedIn } from "../store/index";
 import router from "../router";
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc, getDoc } from "firebase/firestore"; 
+import { useStore } from "../store"
 
-const username = ref("");
+const user = ref("");
 const email = ref("");
 const password1 = ref("");
 const password2 = ref("");
+const store = useStore();
+const cart = ref("");
 
 const registerUserByEmail = async () => {
   if (password1.value !== password2.value) {
@@ -21,9 +24,10 @@ const registerUserByEmail = async () => {
     return;
   }
   try {
-    await createUserWithEmailAndPassword(auth, email.value, password1.value);
-    await setDoc(doc(firestore, "carts", email.value), {cartInfo: []})
-    console.log(email.value)
+    const { user } = await createUserWithEmailAndPassword(auth, email.value, password1.value);
+    store.user = user;
+    const { cart } = (await getDoc(doc(firestore, "carts", user.email))).data();
+    store.cart = cart;
     router.push("/Purchase");
     isLoggedIn.value = true;
   } catch (error) {
@@ -35,8 +39,9 @@ const registerUserByEmail = async () => {
 const registerUserByGoogle = async () => {
   const provider = new GoogleAuthProvider();
   const { user } = await signInWithPopup(auth, provider);
-  await setDoc(doc(firestore, "carts", user.email), {cartInfo: []})
-  console.log(user.email)
+  const { cart } = (await getDoc(doc(firestore, "carts", user.email))).data();
+  store.cart = cart;
+  store.user = user;
   router.push("/Purchase");
   isLoggedIn.value = true;
 };
