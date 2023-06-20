@@ -1,5 +1,6 @@
 <script setup>
 import { useStore } from "../store/index.js";
+
 const store = useStore();
 </script>
 
@@ -7,7 +8,7 @@ const store = useStore();
   <button class="purchase_btn" @click="store.clear()">Clear Cart</button>
 
   <div id="container">
-    <div class="cartlist" v-for="movie in Array.from(store.cart.values())">
+    <div class="cartlist" v-for="movie in Array.from(store.cartMovies.values())">
       <div class="display">
         <div class="name">{{ movie.id }}: {{ movie.title }}</div>
 
@@ -37,7 +38,7 @@ const store = useStore();
   width: 250px;
   margin: 10px;
   background: linear-gradient(to right, black);
-  border: 3px solid gray;
+  border: 3px solid red;
   border-radius: 20px;
   padding: 10px;
   text-align: center;

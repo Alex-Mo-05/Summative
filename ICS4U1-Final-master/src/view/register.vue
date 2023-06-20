@@ -26,8 +26,7 @@ const registerUserByEmail = async () => {
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email.value, password1.value);
     store.user = user;
-    const { cart } = (await getDoc(doc(firestore, "carts", user.email))).data();
-    store.cart = cart;
+    await setDoc(doc(firestore, "carts", user.email), {cartInfo: [0]});
     router.push("/Purchase");
     isLoggedIn.value = true;
   } catch (error) {
@@ -39,8 +38,7 @@ const registerUserByEmail = async () => {
 const registerUserByGoogle = async () => {
   const provider = new GoogleAuthProvider();
   const { user } = await signInWithPopup(auth, provider);
-  const { cart } = (await getDoc(doc(firestore, "carts", user.email))).data();
-  store.cart = cart;
+  await setDoc(doc(firestore, "carts", user.email), {cartInfo: []});
   store.user = user;
   router.push("/Purchase");
   isLoggedIn.value = true;

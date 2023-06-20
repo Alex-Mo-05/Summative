@@ -3,12 +3,12 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { ref } from "vue";
 import { firestore } from "../firebase";
-import email from "../components/Login.vue"
 
 export const useStore = defineStore("store", {
   state: () => {
     return {
       movies: [],
+      cartMovies: [],
       cart: new Map(),
     };
   },
@@ -78,21 +78,20 @@ export const useStore = defineStore("store", {
 
     
     async addToCart(id, poster) {
-      this.cart.push(id, poster);
-      console.log(this.user.email);
-      await setDoc(doc(firestore, "carts", this.user.email), { cartInfo: this.cart });
-      console.log(this.cart);
+      this.cartMovies.unshift({id, poster});
+      await setDoc(doc(firestore, "carts", this.user.email), { cartInfo: this.cartMovies });
     },
 
     async removeFromCart(id) {
-      this.cart.delete(id)
-      await doc(firestore, "carts", store.user).update({
+      this.cartMovies.remove(id)
+      await doc(firestore, "carts", this.user.email).update({
         cartInfo: firebase.firestore.FieldValue.arrayRemove(id)
       }) ;
     },
 
-    clear() {
-      this.cart = new Map();
+    async clear() {
+      this.cartMovies = [];
+      await setDoc(doc(firestore, "carts", this.user.email), {cartInfo: []})
     },
   
     
